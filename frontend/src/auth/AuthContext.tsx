@@ -1,5 +1,17 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { getProfile, login as apiLogin, logout as apiLogout, signup as apiSignup, type User } from '@/lib/api'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react'
+import {
+  getProfile,
+  login as apiLogin,
+  logout as apiLogout,
+  signup as apiSignup,
+  type User,
+} from '@/lib/api'
 
 const TOKEN_STORAGE_KEY = 'flowsync_token'
 
@@ -11,7 +23,7 @@ type AuthContextValue = {
     fullName: string | null,
     email: string,
     password: string,
-    passwordConfirmation: string
+    passwordConfirmation: string,
   ) => Promise<void>
   logout: () => Promise<void>
 }
@@ -32,10 +44,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     getProfile(storedToken)
       .then((profile) => {
+        // A login/signup may have completed while this request was in
+        // flight and already persisted a newer token — don't clobber it.
+        if (localStorage.getItem(TOKEN_STORAGE_KEY) !== storedToken) return
         setToken(storedToken)
         setUser(profile)
       })
       .catch(() => {
+        if (localStorage.getItem(TOKEN_STORAGE_KEY) !== storedToken) return
         localStorage.removeItem(TOKEN_STORAGE_KEY)
       })
       .finally(() => setIsLoading(false))
@@ -48,7 +64,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    const { user: loggedInUser, token: newToken } = await apiLogin({ email, password })
+    const { user: loggedInUser, token: newToken } = await apiLogin({
+      email,
+      password,
+    })
     persistSession(loggedInUser, newToken)
   }
 
@@ -56,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fullName: string | null,
     email: string,
     password: string,
-    passwordConfirmation: string
+    passwordConfirmation: string,
   ) {
     const { user: newUser, token: newToken } = await apiSignup({
       fullName,

@@ -29,7 +29,9 @@ export class ApiError extends Error {
   generalMessage?: string
 
   constructor(errors: Array<{ message: string; field?: string }>) {
-    const fieldErrors = errors.filter((error): error is FieldError => Boolean(error.field))
+    const fieldErrors = errors.filter((error): error is FieldError =>
+      Boolean(error.field),
+    )
     const generalMessage = errors.find((error) => !error.field)?.message
 
     super(generalMessage ?? fieldErrors[0]?.message ?? 'Request failed')
@@ -49,7 +51,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       },
     })
   } catch {
-    throw new ApiError([{ message: 'No se pudo conectar con el servidor. Inténtalo de nuevo.' }])
+    throw new ApiError([
+      { message: 'No se pudo conectar con el servidor. Inténtalo de nuevo.' },
+    ])
   }
 
   const body = await response.json().catch(() => null)
@@ -65,6 +69,10 @@ function withAuth(token: string): HeadersInit {
   return { Authorization: `Bearer ${token}` }
 }
 
+/**
+ * `fullName` must be sent as an explicit `null` when empty — the backend's
+ * validator requires the key to be present and 422s if it's omitted.
+ */
 export function signup(payload: {
   fullName: string | null
   email: string
