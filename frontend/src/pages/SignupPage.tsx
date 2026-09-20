@@ -5,7 +5,13 @@ import { ApiError } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 export function SignupPage() {
   const { signup } = useAuth()
@@ -35,10 +41,16 @@ export function SignupPage() {
       navigate('/profile')
     } catch (error) {
       if (error instanceof ApiError) {
-        setFieldErrors(Object.fromEntries(error.fieldErrors.map((e) => [e.field, e.message])))
+        setFieldErrors(
+          Object.fromEntries(
+            error.fieldErrors.map((e) => [e.field, e.message]),
+          ),
+        )
         setGeneralError(error.generalMessage ?? null)
       } else {
-        setGeneralError('No se pudo conectar con el servidor. Inténtalo de nuevo.')
+        setGeneralError(
+          'No se pudo conectar con el servidor. Inténtalo de nuevo.',
+        )
       }
     } finally {
       setIsSubmitting(false)
@@ -50,11 +62,15 @@ export function SignupPage() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Crear cuenta</CardTitle>
-          <CardDescription>Regístrate para empezar a usar FlowSync</CardDescription>
+          <CardDescription>
+            Regístrate para empezar a usar FlowSync
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            {generalError && <p className="text-sm text-destructive">{generalError}</p>}
+            {generalError && (
+              <p className="text-sm text-destructive">{generalError}</p>
+            )}
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="fullName">Nombre completo</Label>
@@ -75,7 +91,9 @@ export function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              {fieldErrors.email && <p className="text-sm text-destructive">{fieldErrors.email}</p>}
+              {fieldErrors.email && (
+                <p className="text-sm text-destructive">{fieldErrors.email}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -88,12 +106,16 @@ export function SignupPage() {
                 required
               />
               {fieldErrors.password && (
-                <p className="text-sm text-destructive">{fieldErrors.password}</p>
+                <p className="text-sm text-destructive">
+                  {fieldErrors.password}
+                </p>
               )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="passwordConfirmation">Confirma la contraseña</Label>
+              <Label htmlFor="passwordConfirmation">
+                Confirma la contraseña
+              </Label>
               <Input
                 id="passwordConfirmation"
                 type="password"
@@ -102,7 +124,9 @@ export function SignupPage() {
                 required
               />
               {fieldErrors.passwordConfirmation && (
-                <p className="text-sm text-destructive">{fieldErrors.passwordConfirmation}</p>
+                <p className="text-sm text-destructive">
+                  {fieldErrors.passwordConfirmation}
+                </p>
               )}
             </div>
 
@@ -112,7 +136,10 @@ export function SignupPage() {
 
             <p className="text-center text-sm text-muted-foreground">
               ¿Ya tienes cuenta?{' '}
-              <Link to="/login" className="text-primary underline-offset-4 hover:underline">
+              <Link
+                to="/login"
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 Inicia sesión
               </Link>
             </p>
