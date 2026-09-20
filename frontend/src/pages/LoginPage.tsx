@@ -5,7 +5,13 @@ import { ApiError } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 export function LoginPage() {
   const { login } = useAuth()
@@ -28,14 +34,20 @@ export function LoginPage() {
       navigate('/profile')
     } catch (error) {
       if (error instanceof ApiError) {
-        setFieldErrors(Object.fromEntries(error.fieldErrors.map((e) => [e.field, e.message])))
+        setFieldErrors(
+          Object.fromEntries(
+            error.fieldErrors.map((e) => [e.field, e.message]),
+          ),
+        )
         setGeneralError(
           error.generalMessage === 'Invalid user credentials'
             ? 'Email o contraseña incorrectos.'
-            : (error.generalMessage ?? null)
+            : (error.generalMessage ?? null),
         )
       } else {
-        setGeneralError('No se pudo conectar con el servidor. Inténtalo de nuevo.')
+        setGeneralError(
+          'No se pudo conectar con el servidor. Inténtalo de nuevo.',
+        )
       }
     } finally {
       setIsSubmitting(false)
@@ -47,11 +59,15 @@ export function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Iniciar sesión</CardTitle>
-          <CardDescription>Introduce tus credenciales para continuar</CardDescription>
+          <CardDescription>
+            Introduce tus credenciales para continuar
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            {generalError && <p className="text-sm text-destructive">{generalError}</p>}
+            {generalError && (
+              <p className="text-sm text-destructive">{generalError}</p>
+            )}
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="email">Email</Label>
@@ -62,7 +78,9 @@ export function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              {fieldErrors.email && <p className="text-sm text-destructive">{fieldErrors.email}</p>}
+              {fieldErrors.email && (
+                <p className="text-sm text-destructive">{fieldErrors.email}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -75,7 +93,9 @@ export function LoginPage() {
                 required
               />
               {fieldErrors.password && (
-                <p className="text-sm text-destructive">{fieldErrors.password}</p>
+                <p className="text-sm text-destructive">
+                  {fieldErrors.password}
+                </p>
               )}
             </div>
 
@@ -85,7 +105,10 @@ export function LoginPage() {
 
             <p className="text-center text-sm text-muted-foreground">
               ¿No tienes cuenta?{' '}
-              <Link to="/signup" className="text-primary underline-offset-4 hover:underline">
+              <Link
+                to="/signup"
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 Regístrate
               </Link>
             </p>
