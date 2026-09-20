@@ -14,9 +14,12 @@ setup:
 
 # Runs backend and frontend dev servers together; Ctrl+C stops both.
 # `kill 0` targets this recipe's whole process group, so background jobs
-# started here (and their npm/node children) are cleaned up on exit.
+# started here (and their npm/node children) are cleaned up on exit. The
+# trap disarms itself before calling kill: `kill 0` also signals this very
+# shell, and leaving TERM/EXIT still trapped at that point re-enters the
+# same handler and crashes the shell.
 start:
-	trap 'kill 0' EXIT INT TERM; \
+	trap 'trap - EXIT INT TERM; kill 0' EXIT INT TERM; \
 	(cd $(BACKEND) && npm run dev) & \
 	(cd $(FRONTEND) && npm run dev) & \
 	wait
