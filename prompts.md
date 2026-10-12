@@ -204,6 +204,8 @@ anterior a la regla actual, por eso no cuenta como evidencia).
 
 Resultado: coincide con el veredicto del agente ("no se cumple"), con la
 reserva de que son commits de mantenedores, no del flujo de un alumno.
+
+
 ---
 
 ## Prompt 4
@@ -212,81 +214,57 @@ reserva de que son commits de mantenedores, no del flujo de un alumno.
 **Herramienta:** Claude Code
 
 ```
----
+En docs/auditoria/jsg.md, la tabla de la sección "## Auditoría" tiene celdas
+demasiado largas en las filas R2, R3, R4 y R5. La tabla debe ser breve y fácil
+de revisar, y la evidencia de cada fila debe caber en una línea. Tu trabajo es
+solo acortar la redacción de esas celdas, sin cambiar lo que dicen.
 
-## Prompt 2
+Qué acortar:
+- Columna "Evidencia": una sola frase por fila, de unas 35 palabras como
+  máximo, citando hashes cortos de commit.
+- Columna "Qué se revisó": como máximo 3 elementos (comandos o archivos), los
+  principales. Los comandos completos ya constan en la sección "## Cambios tras
+  la primera pasada", no hace falta repetirlos.
 
-**Modelo:** Sonnet 5.5 High
-**Herramienta:** Claude Code
+Qué NO puedes tocar:
+- Ningún veredicto.
+- La columna "Qué haría con ella" de ninguna fila.
+- La sección "## Expectativa inicial" ni nada anterior a "## Auditoría".
+- Las filas R1, R6, R7 y R8.
+- La estructura de la tabla ni sus cabeceras.
 
-```
-Hace un rato escribiste en docs/auditoria/jsg.md la sección "## Auditoría". Una
-revisión independiente ha puesto en duda algunas afirmaciones de las filas R2,
-R3, R4 y R5. Vuelve a comprobarlas con comandos y corrige solo lo que la
-evidencia obligue a corregir. Sigue siendo una auditoría: no propongas ni hagas
-correcciones del proyecto.
+Qué tiene que seguir diciendo cada fila (no puedes perder ninguno de estos
+puntos al acortar):
+- R2: que el historial de commits no registra la creación de ramas y que el
+  único dato sale del reflog local, que no es historial de commits ni estado de
+  archivos.
+- R3: que afc4b74 dice "en la rama de partida" de s5, que es posterior a
+  0e56705 (que fijó la redacción actual), que git no registra en qué rama se
+  creó un commit y por eso la conclusión se apoya en el mensaje, y que son
+  commits de mantenedores, no del flujo de un alumno.
+- R4: que 14 de 15 asuntos cumplen `tipo(scope): descripción` (el que no
+  cumple es a3bb962), que 12 de 15 llevan Co-Authored-By cosa que la skill no
+  exige, y que no se puede comprobar que se invocara la skill ni qué es "una
+  petición".
+- R5: que de los commits posteriores a la regla solo cbe9617 toca controladores,
+  que lleva el README de tasks y ningún diff en backend/.adonisjs/, y que la
+  ausencia de cambios necesarios en .adonisjs/ se verificó leyendo, sin
+  regenerar, con un solo commit aplicable.
 
-Ventana de commits: los mismos 15 de antes, del a3bb962 hacia atrás. Acótalos
-con `git log a3bb962~15..a3bb962` (o `git log -15` sin filtros). No combines -15
-con un filtro de ruta: eso devuelve los últimos 15 commits que tocan esa ruta,
-no los últimos 15 del repo.
+Reglas de formato:
+- No uses comillas invertidas anidadas dentro de un fragmento de código; deben
+  renderizar bien en una tabla de Markdown (escapa los | cuando haga falta).
+- No añadas evidencia nueva ni ejecutes comandos: solo reformulas lo ya escrito.
 
-Afirmaciones a comprobar:
-
-R3. Dijiste que "el historial lineal no dice en qué rama se hizo cada uno".
-Revisa los mensajes completos (asunto y cuerpo) y los metadatos de los 15
-commits y dime si alguno indica en qué rama se hizo. Para cada commit que lo
-indique, averigua con git si es anterior o posterior al commit que introdujo la
-redacción actual de esta regla en CLAUDE.md (por ejemplo con `git log -S` sobre
-el texto de la regla). Decide el veredicto solo con lo que veas.
-
-R4. Dijiste que "los 15 asuntos siguen `tipo(scope): descripción`". Cuéntalos
-uno a uno y lista los que no cumplen. Contrasta además lo que exige exactamente
-.claude/skills/commit/SKILL.md con lo que se puede observar en los commits, y
-separa lo que es comprobable de lo que no.
-
-R5. Dijiste que el commit cbe9617 "no lleva diff de .adonisjs/ porque solo se
-añadieron decoradores", pero tú mismo anotaste que no se pudo confirmar.
-Indica cuántos commits de la ventana son posteriores a la regla y tocan rutas,
-controladores, validadores o transformers. Para cada uno, comprueba con git si
-en el mismo commit hay diff de backend/.adonisjs/ y si se actualizó el README
-de la capability (docs/capabilities/<nombre>/README.md). No afirmes que
-.adonisjs/ no necesitaba cambiar a menos que lo puedas verificar con comandos
-de solo lectura. Si solo se puede verificar regenerándolo (lo cual modificaría
-archivos), dilo y refléjalo en el veredicto.
-
-R2. Tu evidencia sale del reflog local, que no forma parte de los 15 commits ni
-del estado de los archivos, y la única rama que juzgas es la de esta propia
-auditoría. Separa en la columna de evidencia lo que sale del historial de
-commits de lo que sale del reflog local, y reconsidera si el veredicto se
-sostiene solo con lo primero.
-
-Reglas para los veredictos: exactamente uno de "se cumple", "no se cumple" o
-"no se puede comprobar con la información disponible". Los veredictos salen
-solo de la evidencia que obtengas ahora; no tengas en cuenta ninguna otra parte
-del archivo. Si la evidencia nueva no cambia un veredicto, déjalo igual.
-
-Cómo escribirlo en docs/auditoria/jsg.md:
-- Edita únicamente las filas R2, R3, R4 y R5 de la tabla de "## Auditoría"
-  (columna de evidencia, y veredicto si cambia). No toques las demás filas ni
-  nada anterior a la sección "## Auditoría".
-- Debajo de la tabla añade una sección "## Cambios tras la primera pasada" con
-  una línea por fila revisada: regla, veredicto antes -> después (o "sin
-  cambio") y el comando que lo justifica.
+Al terminar, añade al final de la sección "## Cambios tras la primera pasada"
+una línea que diga que se acortaron las celdas de R2 a R5 por formato, sin
+cambiar veredictos ni evidencia.
 
 Restricciones duras:
-- Solo comandos de git de lectura y lectura de archivos. No uses gh ni red.
 - No modifiques ningún archivo salvo docs/auditoria/jsg.md.
 - No ejecutes git add, commit, checkout, switch, stash, reset ni nada que cambie
   el estado del repo.
-- No inventes evidencia: si no la has comprobado con un comando, no la escribas.
-- Al terminar, responde solo con una línea: qué filas has cambiado y cuáles no.
-
-```
-
-**Qué salió:** 
-
-Actualización de la tabla de auditoría y apartado "Cambios tras la primera pasada" donde se documentan los cambios realizados en esta segunda pasada respecto a la primera.
+- Al terminar, responde solo con una línea: qué filas has acortado.
 
 
 ```
